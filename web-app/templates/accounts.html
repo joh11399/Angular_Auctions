@@ -1,0 +1,16 @@
+<div ng-controller="accountsController">
+
+    <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+    <table>
+        <thead>
+        <tr>
+            <th>Username</th><th>Email</th><th>Name</th>
+        </tr>
+        </thead>
+        <tr ng-repeat="account in accounts">
+            <td><span ng-click="showEdit(account.id)" style="text-decoration: underline; cursor: pointer;">{{account.username}}</span></td>
+            <td>{{account.email}}</td><td>{{account.name}}</td>
+        </tr>
+        <tr><td colspan="3"><a href="#/account" class="btn btn-default">Create Account</a></td></tr>
+    </table>
+</div>

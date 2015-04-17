@@ -12,7 +12,6 @@ class AccountRestController {
     @SuppressWarnings("GroovyUnusedDeclaration")
     static responseFormats = ['json', 'xml']
 
-    @Secured('permitAll()')
     def index(Integer max, String q) {
         params.max = Math.min(max ?: 10, 100)
 
@@ -24,7 +23,6 @@ class AccountRestController {
         respond accounts
     }
 
-    @Secured(['ROLE_USER'])
     def show() {
         def account = springSecurityService.currentUser as Account
         Account accountInstance = Account.findById(params.id)
@@ -43,38 +41,112 @@ class AccountRestController {
     }
 
 
-    @Secured('permitAll()')
     def save() {
-        Account accountInstance = new Account();
-        AccountService.copyAccountFromSource(request.JSON, accountInstance)
-        response.status = AccountService.validateAccount(accountInstance)
 
-        if (response.status == 400) {
-            render "Bad request.  The parameters provided caused an error: " + accountInstance.errors
-        } else if (response.status == 409) {
-            render "Duplicate account.  The username and email must be unique.  Error: " + accountInstance.errors
-        } else {
-            //try saving the accountInstance
-            // an exception will be thrown if the password is invalid
-            try {
-                accountInstance.save(flush: true, failOnError: true)
-                def r = Role.findByAuthority('ROLE_USER')
-                new AccountRole(account: accountInstance, role: r).save(flush: true, failOnError: true)
-                render(contentType: 'text/json') {
-                    [
-                            'responseText': "Success!  Account ID ${accountInstance.id} has been created.",
-                            'id'    : accountInstance.id
-                    ]
+        if (!params.id && !request.JSON?.id) {
+            Account accountInstance = new Account();
+            AccountService.copyAccountFromSource(request.JSON, accountInstance)
+            response.status = AccountService.validateAccount(accountInstance)
+
+            if (response.status == 400) {
+                render "Bad request.  The parameters provided caused an error: " + accountInstance.errors
+            } else if (response.status == 409) {
+                render "Duplicate account.  The username and email must be unique.  Error: " + accountInstance.errors
+            } else {
+                //try saving the accountInstance
+                // an exception will be thrown if the password is invalid
+                try {
+                    accountInstance.save(flush: true, failOnError: true)
+                    def r = Role.findByAuthority('ROLE_USER')
+                    new AccountRole(account: accountInstance, role: r).save(flush: true, failOnError: true)
+                    render(contentType: 'text/json') {
+                        [
+                                'responseText': "Success!  Account ID ${accountInstance.id} has been created.",
+                                'id'          : accountInstance.id
+                        ]
+                    }
+                }
+                catch (ex) {
+                    response.status = 400
+                    render "Invalid password.  Passwords must be between 8-16 characters, containing a number and a letter."
                 }
             }
-            catch(ex) {
-                response.status = 400
-                render "Invalid password.  Passwords must be between 8-16 characters, containing a number and a letter."
+        }else{
+
+            //get the id from JSON  (it appears Angular doesn't include it in the URI/params)
+            def id = request.JSON?.id;
+
+            //this is for updating accounts......
+
+            //TODO  this just overrides the (nonexistent) springsecurity validation
+            def account = Account.findById(id)
+
+            Account accountInstance = Account.findById(id)
+
+
+            println('-----------------------------------')
+            println('-----------------------------------')
+            println('-----------------------------------')
+            println(accountInstance)
+
+            //if the user's account doesn't match the accountInstance  return a 401
+            if (accountInstance?.username != account?.username) {
+                response.status = 401;
+                render "Not authorized to update Account ID ${accountInstance.id}"
+            } else {
+                def accountClone = new Account()
+                AccountService.copyAccountFromSource(request.JSON, accountClone)
+                response.status = AccountService.validateAccount(accountClone)
+
+                if (response.status == 400) {
+                    render "Bad request.  The parameters provided caused an error: " + accountClone.errors
+                }
+                else {
+                    if (response.status == 409) {
+                        //this could be redesigned, but I'll just change it here
+                        //if the response is a 409, that is still acceptable for an update
+                        // just change it to a 200  (because, by now, all other errors would have been caught)
+                        response.status = 200
+                    }
+
+                    AccountService.copyAccountFromSource(accountClone, accountInstance)
+
+                    //try saving the accountInstance
+                    // an exception will be thrown if the password is invalid
+                    try {
+                        accountInstance.save(flush: true, failOnError: true)
+
+                        render(contentType: 'text/json') {[
+                                'responseText': "Success!  Account ID ${accountInstance.id} has been updated.",
+                                'id': accountInstance.id
+                        ]}
+                    }
+                    catch(ex){
+
+                        println('=================================')
+                        println('=================================')
+                        println(ex);
+
+                        def responseText
+                        if(ex.toString().indexOf('Invalid password complexity')!=-1){
+                            responseText = "Invalid password.  Passwords must be between 8-16 characters, containing a number and a letter."
+                        }else{
+                            responseText = "Bad request.  The parameters provided caused an error: " + ex
+                        }
+
+                        response.status = 400
+                        render responseText
+                    }
+                }
             }
         }
     }
 
-    @Secured(['ROLE_USER'])
+    /*
+
+    TODO..  this is the original update() method
+    you needed to merge this into save() because angular was only doing POST calls for both Save and Update functions
+
     def update() {
         if (!params.id) {
             response.status = 400;
@@ -84,6 +156,16 @@ class AccountRestController {
 
         def account = springSecurityService.currentUser as Account
         Account accountInstance = Account.findById(params.id)
+
+
+        //TODO  this just overrides the (nonexistent) springsecurity validation
+        account.username = accountInstance?.username
+
+        println('-----------------------------------')
+        println('-----------------------------------')
+        println('-----------------------------------')
+        println(accountInstance)
+
         //if the user's account doesn't match the accountInstance  return a 401
         if (accountInstance?.username != account?.username) {
             response.status = 401;
@@ -117,6 +199,11 @@ class AccountRestController {
                     ]}
                 }
                 catch(ex){
+
+                    println('=================================')
+                    println('=================================')
+                    println(ex);
+
                     def responseText
                     if(ex.toString().indexOf('Invalid password complexity')!=-1){
                         responseText = "Invalid password.  Passwords must be between 8-16 characters, containing a number and a letter."
@@ -130,8 +217,9 @@ class AccountRestController {
             }
         }
     }
+        */
 
-    @Secured(['ROLE_USER'])
+
     def delete() {
         def account = springSecurityService.currentUser as Account
         if (!params.id) {

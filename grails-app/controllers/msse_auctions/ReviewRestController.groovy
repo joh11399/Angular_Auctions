@@ -12,9 +12,6 @@ class ReviewRestController  {
     @SuppressWarnings("GroovyUnusedDeclaration")
     static responseFormats = ['json', 'xml']
 
-
-    //@Secured(['ROLE_USER'])
-    @Secured('permitAll()')
     def index(Integer max) {
         params.max = Math.min(max ?: 10, 100)
 
@@ -22,8 +19,6 @@ class ReviewRestController  {
         respond reviews
     }
 
-
-    @Secured(['ROLE_USER'])
     def show() {
         def account = springSecurityService.currentUser as Account
         Review reviewInstance = Review.findById(params.id)
@@ -36,8 +31,6 @@ class ReviewRestController  {
         }
     }
 
-
-    @Secured(['ROLE_USER'])
     def save() {
         Review reviewInstance = new Review()
         ReviewService.copyReviewFromSource(request.JSON, reviewInstance)
@@ -70,7 +63,6 @@ class ReviewRestController  {
         }
     }
 
-    @Secured(['ROLE_USER'])
     def update() {
         if (!params.id) {
             response.status = 400;
@@ -105,7 +97,6 @@ class ReviewRestController  {
         }
     }
 
-    @Secured(['ROLE_USER'])
     def delete() {
         if (!params.id) {
             response.status = 400;
@@ -131,5 +122,4 @@ class ReviewRestController  {
             render "Success!  Review ID ${reviewId} has been deleted."
         }
     }
-
 }

@@ -1,0 +1,20 @@
+<div ng-controller="listingsController">
+    <table ng-show="!showingDetails">
+        <thead>
+        <tr>
+            <th>Name</th><th>Description</th><th>Seller ID</th>
+        </tr>
+        </thead>
+        <tr ng-repeat="listing in listings">
+            <td><span ng-click="showEdit(listing.id)" style="text-decoration: underline; cursor: pointer;">{{listing.name}}</span></td>
+            <td>{{listing.description}}</td><td>{{listing.seller.id}}</td>
+        </tr>
+        <tr><td colspan="3"><button ng-click="showCreate()">Create Listing</button></td></tr>
+    </table>
+    <div ng-show="showingDetails">
+        <table><tr><td>Name: </td><td><input type="text" id="listingCreateName"></td></tr>
+            <tr><td>Description: </td><td><input type="text" id="listingCreateDescription"></td></tr></table>
+        <input type="hidden" id="listingId">
+        <button ng-click="showCreate()">Close</button><button ng-click="save()">Save</button>
+    </div>
+</div>

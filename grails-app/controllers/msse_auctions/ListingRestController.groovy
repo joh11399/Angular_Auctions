@@ -13,7 +13,6 @@ class ListingRestController {
     @SuppressWarnings("GroovyUnusedDeclaration")
     static responseFormats = ['json', 'xml']
 
-    @Secured(['permitAll()'])
     def index(Integer max, String description, boolean includeCompleted) {
         params.max = Math.min(max ?: 10, 100)
 
@@ -42,7 +41,6 @@ class ListingRestController {
         respond listings
     }
 
-    @Secured('permitAll()')
     def show() {
         def listingInstance = Listing.findById(params.id)
 
@@ -54,7 +52,6 @@ class ListingRestController {
         }
     }
 
-    @Secured(['ROLE_USER'])
     def save() {
         def account = springSecurityService.currentUser as Account
 
@@ -81,7 +78,6 @@ class ListingRestController {
         }
     }
 
-    @Secured(['ROLE_USER'])
     def update() {
         if (!params.id) {
             response.status = 400;
@@ -113,7 +109,6 @@ class ListingRestController {
         }
     }
 
-    @Secured(['ROLE_USER'])
     def delete() {
         if (!params.id) {
             response.status = 400;

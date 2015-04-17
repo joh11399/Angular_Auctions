@@ -1,0 +1,24 @@
+<div ng-controller="accountController">
+
+    <div ng-show="showingDetails"></div>
+
+
+
+    <div>
+        <table><tr><td>Username: </td><td><input type="text" ng-model="newAccount.username"></td></tr>
+            <tr><td>Email: </td><td><input type="text" ng-model="newAccount.email"></td></tr>
+            <tr><td>Name: </td><td><input type="text" ng-model="newAccount.name"></td>
+            <tr><td>Password: </td><td><input type="password" ng-model="newAccount.password" ng-keyup="passwordKeyup()"><div style="display: inline-block; margin-left: 10px; width: 305px; color: #f22;">{{passwordStrength}}<img ng-show="passwordValid" src="http://www.clipartbest.com/cliparts/Bdi/r6x/Bdir6x6c9.png" style="height: 15px;" /></div></td></tr>
+            <tr><td>Address Street: </td><td><input type="text" ng-model="newAccount.addressStreet"></td></tr>
+            <tr><td>Address City: </td><td><input type="text" ng-model="newAccount.addressCity"></td>
+            <tr><td>Address State: </td><td><input type="text" ng-model="newAccount.addressState"></td></tr>
+            <tr><td>Address Zip: </td><td><input type="text" ng-model="newAccount.addressZip"></td></tr>
+
+
+        </table>
+        <input type="hidden" id="accountId">
+        <button class="btn btn-default" style="margin-right: 10px;" ng-click="hideEdit()">Close</button>
+        <button class="btn btn-danger" style="margin-right: 10px;" ng-click="testClose()">Delete</button>
+        <button class="btn btn-primary" ng-click="save()">Save</button>
+    </div>
+</div>
