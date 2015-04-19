@@ -1,7 +1,46 @@
 var app = angular.module('app');
-app.controller('accountController', function($scope, $location, $resource, $modal) {
+app.controller('accountController', function($scope, $location, $resource, $modal, $routeParams, Account, Accounts, confirmDelete) {
+    var NewAccount = $resource('api/accounts');
+
+
+    $scope.alerts = [];
+
+    $scope.closeAlert = function(index) {
+        $scope.alerts.splice(index, 1);
+    };
+
+
 
     $scope.newAccount = {};
+
+    if($routeParams.id) {
+        var accounts = Accounts.query();
+        accounts.$promise.then(function(){
+            $scope.accounts = accounts;
+
+            $(accounts).each(function(){
+                if(this.id == $routeParams.id){
+                    $scope.newAccount = this;
+                    }
+            });
+        });
+    }
+    else {
+
+
+        //TODO.. this is just auto-fill info for testing (so I don't need to type all this out when trying to create a user)
+        $scope.newAccount = {
+            id: null,
+            username: 'test',
+            email: 'test@test.com',
+            name: 'test',
+            password: 'abcd1234',
+            addressStreet: '123',
+            addressCity: 'fake',
+            addressState: 'MN',
+            addressZip: '54321'
+        };
+    }
 
     $scope.save = function(){
 
@@ -33,9 +72,8 @@ app.controller('accountController', function($scope, $location, $resource, $moda
 
                             console.log(result); //this returns the indexed logon page
 
-                            $location.path("#/accounts");
+                            $location.path("accounts");
 
-                            $scope.alerts.push({type: 'success', msg: result.responseText });
 
                         },
                         function (result) {
@@ -53,7 +91,7 @@ app.controller('accountController', function($scope, $location, $resource, $moda
             });
         }
         else {
-            var createAccount = Accounts.save($scope.newAccount);
+            var createAccount = NewAccount.save($scope.newAccount);
 
             createAccount.$promise.then(function(result) {
                     console.log('create...succeeded....');
@@ -62,7 +100,7 @@ app.controller('accountController', function($scope, $location, $resource, $moda
 
                     console.log(result); //this returns the indexed logon page
 
-                    $location.path("#/accounts");
+                    $location.path("accounts");
 
                     $scope.alerts.push({type: 'success', msg: result.responseText });
                 },
@@ -110,29 +148,22 @@ app.controller('accountController', function($scope, $location, $resource, $moda
 
     $scope.hideEdit = function(){
         $scope.alerts = [];
-        $location.path("#/accounts");
+        $location.path("accounts");
     };
 
 
-    $scope.testClose = function(){
-        var modalInstance = $modal.open({
-            templateUrl: 'confirmDialog.html',
-            size: 'lg',
-            controller: 'accountController',
-            resolve: {
-                message: function () {
-                    //return 'Are you sure you want to delete "' + play.song.title + '" by ' + play.artist.name + '?'
-                },
-                title: function () {
-                    return 'Confirm Play Delete';
-                }
-            }
-        });
+    $scope.deleteClick = function(){
+        confirmDelete().result.then(function() {
+            Account.delete({id: $routeParams.id},
+            function(result){
 
-        modalInstance.result.then(function () {
-            //$scope.plays.splice($scope.plays.indexOf(play), 1);
-            //$scope.alerts.push({type: 'success', msg: 'Song play removed'});
+                    console.log(result);
+
+                    //$location.path("accounts");
+
+            }, function(result){
+                    $scope.alerts.push({type: 'danger', msg: result.status + ': '+ result.statusText});
+            });
         });
     };
-
 });

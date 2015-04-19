@@ -13,3 +13,25 @@
 *= require mobile
 *= require_self
 */
+
+.loginLink{
+    color: #777;
+    text-decoration: underline;
+    font-weight: normal;
+    cursor: pointer;
+    float: right;
+    margin-right: 10px;
+}
+.loginLink:hover {
+    color: #777;
+}
+.loginLink:visited {
+    color: #777;
+}
+.loginLbl{
+    color: #bbb;
+    font-weight: normal;
+    cursor: default;
+    float: right;
+    margin-right: 10px;
+}

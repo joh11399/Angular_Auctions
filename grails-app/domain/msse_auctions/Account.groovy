@@ -52,7 +52,7 @@ class Account {
 	Set<Role> getAuthorities() {
 		AccountRole.findAllByAccount(this).collect { it.role }
 	}
-/*
+
 	def beforeInsert() {
         if(validatePasswordComplexity(password)){
             encodePassword()
@@ -72,21 +72,20 @@ class Account {
             }
 		}
 	}
-*/
+
     def validatePasswordComplexity(def pw){
         def validPasswordLength = pw.length() > 7 && pw.length() < 17
         def containsNumber = pw.matches(".*\\d.*")
         def containsLetter = pw ==~ /.*[a-zA-Z].*/
 
         //TODO  you removed this to get past the complexity/encryption issues...........
-        //return (validPasswordLength && containsNumber && containsLetter)
-        return true
+        return (validPasswordLength && containsNumber && containsLetter)
     }
 
 	protected void encodePassword() {
 
         //TODO,  encoding the password causes issues with angular
 
-        //password = springSecurityService?.passwordEncoder ? springSecurityService.encodePassword(password) : password
+        password = springSecurityService?.passwordEncoder ? springSecurityService.encodePassword(password) : password
 	}
 }

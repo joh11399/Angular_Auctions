@@ -12,6 +12,7 @@ class AccountRestController {
     @SuppressWarnings("GroovyUnusedDeclaration")
     static responseFormats = ['json', 'xml']
 
+
     def index(Integer max, String q) {
         params.max = Math.min(max ?: 10, 100)
 

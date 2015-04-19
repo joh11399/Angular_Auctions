@@ -11,6 +11,7 @@ class UrlMappings {
         "/api/bids"(resources: 'bidRest')
         "/api/listings"(resources: 'listingRest')
         "/api/reviews"(resources: 'reviewRest')
+        "/api/logins"(resources: 'loginRest')
 
         "/"(view:"/index")
         "500"(view:'/error')
