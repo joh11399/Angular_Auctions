@@ -12,6 +12,7 @@ class BidRestController {
     @SuppressWarnings("GroovyUnusedDeclaration")
     static responseFormats = ['json', 'xml']
 
+    @Secured('permitAll')
     def index(Integer max, int listingId) {
         params.max = Math.min(max ?: 10, 100)
 
@@ -24,6 +25,7 @@ class BidRestController {
         respond bids
     }
 
+    @Secured('permitAll')
     def show() {
         Bid bidInstance = Bid.findById(params.id)
 
@@ -35,6 +37,7 @@ class BidRestController {
         }
     }
 
+    @Secured('permitAll')
     def save() {
         def account = springSecurityService.currentUser as Account
 
@@ -72,6 +75,7 @@ class BidRestController {
         }
     }
 
+    @Secured('permitAll')
     def update() {
         if (!params.id) {
             response.status = 400;
@@ -108,6 +112,7 @@ class BidRestController {
     }
 
 
+    @Secured('permitAll')
     def delete() {
         def account = springSecurityService.currentUser as Account
         if (!params.id) {

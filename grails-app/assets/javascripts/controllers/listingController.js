@@ -1,47 +1,23 @@
 var app = angular.module('app');
-app.controller('listingController', function($scope, $resource, $routeParams, $location) {
-
-    var Listing = $resource('api/listings/:id', {}, { save:'PUT' });
-    var Listings = $resource('api/listings', {}, { create:'POST' });
-
-    $scope.listings = Listings.query();
+app.controller('listingController', function($scope, $resource, $routeParams, listingService, loginService) {
 
     $scope.newListing = {};
     if($routeParams.id) {
-        var getListing= Listing.get({id: $routeParams.id});
-
-        getListing.$promise.then(function(result){
-            console.log(result);
-            $scope.newListing = result;
+        listingService.getListing($routeParams.id).then(function (data) {
+            $scope.newListing = data;
         });
-
-        var listings = Listings.query();
-
-
-        /*
-
-        //in the accountController, it loops through all the accounts and
-        // assigns $scope.newAccount = this.
-        //  that seemed to work, so I might try it in listingController too
-
-        listings.$promise.then(function(){
-            //$scope.accounts = accounts;
-
-            $(listings).each(function(){
-                if(this.id == $routeParams.id){
-                    //$scope.newAccount = this;
-                    console.log(this);
-                }
-            });
+    }else{
+        loginService.getLoggedInUser().then(function(result) {
+            $scope.newListing.seller = {};
+            $scope.newListing.seller.id = result.data[0].id;
         });
-        */
-
     }
+
+
 
     $scope.startDateFormatted = function(){
         return $scope.newListing.startDate
     };
-
 
     $scope.save = function(){
 
@@ -51,16 +27,8 @@ app.controller('listingController', function($scope, $resource, $routeParams, $l
 
         if($scope.newListing.id) {
 
-            $($scope.listings).each(function (i) {
-                if (this.id == $scope.newListing.id) {
+                    listingService.updateListing($scope.newListing).then(function(){
 
-                    //$scope.listings[i] = $scope.newListing;
-
-                    var saveListing = Listing.save($scope.newListing);
-
-                    console.log($scope.newListing);
-
-                    saveListing.$promise.then(function () {
 
                             console.log('update......');
 
@@ -74,16 +42,15 @@ app.controller('listingController', function($scope, $resource, $routeParams, $l
 
                             console.log(result); //this returns the indexed logon page
 
-                            $scope.alerts.push({type: 'danger', msg: 'there was a problem updating this account.'});
+                            $scope.alerts.push({type: 'danger', msg: 'there was a problem updating this listing.'});
 
                         });
                 }
-            });
-        }
         else {
-            var createListing = Listings.create($scope.newListing);
+            console.log($scope.newListing);
 
-            createListing.$promise.then(function(result) {
+            listingService.createListing($scope.newListing).then(function(){
+
                     console.log('create...succeeded....');
                     console.log(result.responseText);
                     console.log(result.status);
@@ -100,7 +67,7 @@ app.controller('listingController', function($scope, $resource, $routeParams, $l
 
                     console.log(result); //this returns the indexed logon page
 
-                    $scope.alerts.push({type: 'danger', msg: 'there was a problem creating this account.'});
+                    $scope.alerts.push({type: 'danger', msg: 'there was a problem creating this listing.'});
 
                 });
         }

@@ -1,7 +1,5 @@
 var app = angular.module('app');
-app.controller('accountController', function($scope, $location, $resource, $modal, $routeParams, Account, Accounts, confirmDelete) {
-    var NewAccount = $resource('api/accounts');
-
+app.controller('accountController', function($scope, $location, $resource, $modal, $routeParams, accountService, confirmDelete) {
 
     $scope.alerts = [];
 
@@ -9,20 +7,11 @@ app.controller('accountController', function($scope, $location, $resource, $moda
         $scope.alerts.splice(index, 1);
     };
 
-
-
     $scope.newAccount = {};
 
     if($routeParams.id) {
-        var accounts = Accounts.query();
-        accounts.$promise.then(function(){
-            $scope.accounts = accounts;
-
-            $(accounts).each(function(){
-                if(this.id == $routeParams.id){
-                    $scope.newAccount = this;
-                    }
-            });
+        accountService.getAccount($routeParams.id).then(function(data){
+            $scope.newAccount = data;
         });
     }
     else {
@@ -50,70 +39,21 @@ app.controller('accountController', function($scope, $location, $resource, $moda
 
         if($scope.newAccount.id) {
 
-            $($scope.accounts).each(function (i) {
-                if (this.id == $scope.newAccount.id) {
-
-
-                    console.log($scope.newAccount);
-                    $scope.accounts[i] = $scope.newAccount;
-
-
-                    //TODO  setting the password to null means it won't attempt to update it...
-                    //$scope.accounts[i].password = null;
-
-
-                    console.log($scope.accounts[i]);
-
-
-                    $scope.accounts[i].$save().then(function (result) {
-
-                            console.log('update...succeeded......');
-                            console.log(result.responseText);
-
-                            console.log(result); //this returns the indexed logon page
-
-                            $location.path("accounts");
-
-
-                        },
-                        function (result) {
-
-                            console.log('update...FAILED......');
-                            console.log(result.responseText);
-                            console.log(result.status);
-
-                            console.log(result); //this returns the indexed logon page
-
-                            $scope.alerts.push({type: 'danger', msg: 'there was a problem updating this account.'});
-
-                        });
-                }
-            });
+            accountService.updateAccount($scope.newAccount).then(
+                function () {
+                    $location.path("accounts");
+                },
+                function () {
+                    $scope.alerts.push({type: 'danger', msg: 'there was a problem updating this account.'});
+                });
         }
         else {
-            var createAccount = NewAccount.save($scope.newAccount);
-
-            createAccount.$promise.then(function(result) {
-                    console.log('create...succeeded....');
-                    console.log(result.responseText);
-                    console.log(result.status);
-
-                    console.log(result); //this returns the indexed logon page
-
+            accountService.createAccount($scope.newAccount).then(function() {
                     $location.path("accounts");
-
-                    $scope.alerts.push({type: 'success', msg: result.responseText });
+                    //$scope.alerts.push({type: 'success', msg: result.responseText });
                 },
                 function(result){
-
-                    console.log('create...FAILED......');
-                    console.log(result.responseText);
-                    console.log(result.status);
-
-                    console.log(result); //this returns the indexed logon page
-
-                    $scope.alerts.push({type: 'danger', msg: 'there was a problem creating this account.'});
-
+                    $scope.alerts.push({type: 'danger', msg: 'there was a problem creating this account.<br>' + result.responseText});
                 });
         }
     };
@@ -154,16 +94,12 @@ app.controller('accountController', function($scope, $location, $resource, $moda
 
     $scope.deleteClick = function(){
         confirmDelete().result.then(function() {
-            Account.delete({id: $routeParams.id},
-            function(result){
-
-                    console.log(result);
-
-                    //$location.path("accounts");
-
-            }, function(result){
+            accountService.deleteAccount($routeParams.id).then(
+                function(){
+                    $location.path("accounts");
+                }, function(result){
                     $scope.alerts.push({type: 'danger', msg: result.status + ': '+ result.statusText});
-            });
+                });
         });
     };
 });

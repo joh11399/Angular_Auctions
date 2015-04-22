@@ -7,3 +7,16 @@ var app = angular.module('app').factory('loginDialog', function($modal) {
         });
     }
 });
+
+
+app.factory('loginService', ['$http', loginService]);
+function loginService($http){
+
+    var getLoggedInUser = function(){
+        return $http.get('api/logins');
+    };
+
+    return{
+        getLoggedInUser: getLoggedInUser
+    }
+}

@@ -6,11 +6,13 @@ app.controller('loginController', function ($scope, $resource, $modalInstance) {
     };
 });
 
-app.controller('loginLinksController', function($scope, $http, $location, loginDialog){
+app.controller('loginLinksController', function($scope, loginService, $location, loginDialog){
+
     $scope.loggedInUser = '';
-    $http.get('api/logins').then(function(result) {
+    loginService.getLoggedInUser().then(function(result) {
         $scope.loggedInUser = result.data[0].username;
     });
+
 
     $scope.loginLink = function(){
         loginDialog();

@@ -1,13 +1,5 @@
 var app = angular.module('app');
-app.controller('accountsController', function($scope, Accounts) {
-
-
-
-    //TODO.......
-    //////////////////console.log(loggedInUser.username);
-
-
-
+app.controller('accountsController', function($scope, $resource) {
 
 
 
@@ -16,12 +8,6 @@ app.controller('accountsController', function($scope, Accounts) {
     $scope.closeAlert = function(index) {
         $scope.alerts.splice(index, 1);
     };
-
-
-
-
-
-
 
     /*
      Accounts = $resource('api/accounts/:id', {}, {
@@ -39,6 +25,7 @@ app.controller('accountsController', function($scope, Accounts) {
      });
      */
 
+    var Accounts = $resource('api/accounts/');
     $scope.accounts = Accounts.query();
 
     /*

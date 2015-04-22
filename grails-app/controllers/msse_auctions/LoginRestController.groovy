@@ -13,18 +13,23 @@ class LoginRestController {
 
     @Secured('permitAll')
     def index() {
+        def id = ""
         def username = ""
         def account = springSecurityService.currentUser as Account
+        try {
+            id = account.id
+        }catch(ex){}
         try {
             username = account.username
         }catch(ex){}
 
         response.status = 201;
 
-        //when using  .query()  in angular, it expects an array to be returned...
+        //when using  $http.get()  in angular, it expects an array to be returned...
         render(contentType: 'text/json') {
             [
             [
+                'id': id,
                 'username': username
             ]
             ]
