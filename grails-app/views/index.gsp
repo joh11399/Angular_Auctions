@@ -2,7 +2,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Welcome to Angular</title>
+    <!-- TODO  .. change the name -->
+    <title>angular assignment</title>
 
     <asset:stylesheet href="application.css"/>
     <asset:javascript src="application.js"/>

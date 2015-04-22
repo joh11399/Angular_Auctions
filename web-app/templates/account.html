@@ -59,7 +59,7 @@ E-mail:
     -->
     <br>
     <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
-    <table><tr><td style="width: 100px;">Username: </td><td><input type="text" ng-model="newAccount.username"></td></tr>
+    <table><tr><td style="width: 150px;">Username: </td><td><input type="text" ng-model="newAccount.username"></td></tr>
         <tr><td>Email: </td><td><input type="text" ng-model="newAccount.email"></td></tr>
         <tr><td>Name: </td><td><input type="text" ng-model="newAccount.name"></td>
         <tr><td>Password: </td><td><input type="password" ng-model="newAccount.password" ng-keyup="passwordKeyup()">

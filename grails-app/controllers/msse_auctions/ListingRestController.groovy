@@ -41,6 +41,7 @@ class ListingRestController {
         respond listings
     }
 
+    @Secured('permitAll')
     def show() {
         def listingInstance = Listing.findById(params.id)
 
@@ -52,6 +53,7 @@ class ListingRestController {
         }
     }
 
+    @Secured('permitAll')
     def save() {
         def account = springSecurityService.currentUser as Account
 
@@ -78,6 +80,7 @@ class ListingRestController {
         }
     }
 
+    @Secured('permitAll')
     def update() {
         if (!params.id) {
             response.status = 400;
@@ -109,6 +112,7 @@ class ListingRestController {
         }
     }
 
+    @Secured('permitAll')
     def delete() {
         if (!params.id) {
             response.status = 400;

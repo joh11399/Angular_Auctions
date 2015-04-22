@@ -6,7 +6,7 @@
         </tr>
         </thead>
         <tr ng-repeat="listing in listings">
-            <td><span ng-click="showEdit(listing.id)" style="text-decoration: underline; cursor: pointer;">{{listing.name}}</span></td>
+            <td><a href="#/listing/{{listing.id}}">{{listing.name}}</a></td>
             <td>{{listing.description}}</td><td><a href="#/account/{{listing.seller.id}}">{{listing.seller.id}}</a></td>
         </tr>
         <tr><td colspan="3"><a href="#/listing" class="btn btn-default">Create Listing</a></td></tr>

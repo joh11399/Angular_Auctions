@@ -70,38 +70,4 @@ app.controller('listingsController', function($scope, $resource){
         return index;
     };
 
-    $scope.save = function(){
-        var id = $('#listingId'),
-            name = $('#listingCreateName'),
-            description = $('#listingCreateDescription');
-
-        var i = $scope.getIndexById(id.val());
-
-        if(i==-1){
-            $scope.listings.push({ id: id.val(), name: name.val(), description: description.val() });
-
-            //Songs.save({title: 'Loser', artist: {id: 3, name: 'Beck'}}) // POST
-
-        }
-        else {
-            //$scope.listings[i] = {id: id.val(), name: name.val(), description: description.val()};
-
-
-            var saveListing = Listings.save({id: id.val(), name: name.val(), description: description.val()});
-
-            saveListing.$promise.then(function(result) {
-                console.log('promise complete!');
-                console.log(result); //this returns the indexed logon page
-            });
-
-            //getListings();
-
-        }
-
-        id.val('');
-        name.val('');
-        description.val('');
-
-        $scope.showCreate();
-    };
 });
