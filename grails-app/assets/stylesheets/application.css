@@ -15,18 +15,8 @@
 */
 
 .loginLink{
-    color: #777;
-    text-decoration: underline;
-    font-weight: normal;
-    cursor: pointer;
     float: right;
     margin-right: 10px;
-}
-.loginLink:hover {
-    color: #777;
-}
-.loginLink:visited {
-    color: #777;
 }
 .loginLbl{
     color: #bbb;
@@ -35,3 +25,6 @@
     float: right;
     margin-right: 10px;
 }
+
+input.ng-invalid.ng-dirty { background-color: #ff9a9a; }
+/*.ng-valid.ng-dirty { background-color: lightgreen; }*/

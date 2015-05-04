@@ -1,47 +1,60 @@
 var app = angular.module('app');
-app.controller('listingsController', function($scope, $resource){
+app.controller('listingsController', function($scope, $resource, bidDialog, reviewDialog, loginService){
 
-    $scope.showingDetails = false;
-    $scope.showCreate = function(){
+    $scope.itemsPerPage = 10;
+    $scope.currentPage = 1;
+    $scope.description = '';
+    $scope.includeCompleted = false;
 
-        var id = 0;
-        $($scope.listings).each(function(){
-            if(this.id > id){
-                id = this.id;
-            }
-        });
-        id++;
-
-        $('#listingId').val(id);
-        $scope.showingDetails = !$scope.showingDetails;
-    };
-    $scope.showEdit = function(id){
-        $('#listingId').val(id);
-
-        var i = $scope.getIndexById(id);
-        $('#listingCreateName').val($scope.listings[i].name);
-        $('#listingCreateDescription').val($scope.listings[i].description);
-
-        $scope.showingDetails = !$scope.showingDetails;
-    };
-
-    var Listings = $resource('api/listings/:id', {
-        create: {method: "POST"},
-        save: {method: "PUT"},
-        find: {
-            method: "GET",
-            isArray: true,
-            url:"api/listings/?sort=:sort&offset=:offset",
-            params:{offset:0}}
+    $scope.loggedInId = '';
+    $scope.loggedInName = '';
+    loginService.getLoggedInUser().then(function(result) {
+        $scope.loggedInId = result.data[0].id;
+        $scope.loggedInName = result.data[0].name;
     });
 
-    var getListings = function(){
+    var Listings = $resource('api/listings/?max=:max&offset=:offset&description=:description&includeCompleted=:includeCompleted&returnListingCount=:returnListingCount');
 
+    var listingsKeyupTimer;
+    $scope.getListingsKeyup = function(){
+        window.clearTimeout(listingsKeyupTimer);
+        listingsKeyupTimer = setTimeout(function(){
+            $scope.getListings();
+        },700);
+    };
 
-        $scope.listings = Listings.query();
+    $scope.getListings = function(){
+        var _offset = ($scope.currentPage - 1) * $scope.itemsPerPage;
+
+         Listings.query({max: $scope.itemsPerPage, offset: _offset, description: $scope.description, includeCompleted: $scope.includeCompleted}).$promise.then(function(data){
+
+             $scope.listings = data;
+
+             var id = $scope.loggedInId;
+             var name = $scope.loggedInName;
+
+            $(data).each(function(i){
+                var hb = $scope.listings[i].highestBidStr;
+                try{ hb = hb.substring(hb.indexOf(' - ') + 3); }
+                catch(ex){}
+
+                if($scope.loggedInId==''){
+                    $scope.listings[i].canBid = false;
+                    $scope.listings[i].canReview = false;
+                }else{
+                    $scope.listings[i].canBid = data[i].timeRemaining != 'completed';
+                    $scope.listings[i].canReview = data[i].timeRemaining == 'completed' && (hb.indexOf(name) != -1 || data[i].seller.id == id);
+                }
+            });
+
+        });
+
+        Listings.get({description: $scope.description, includeCompleted: $scope.includeCompleted, returnListingCount: true}).$promise.then(function(data){
+            $scope.totalItems = data.listingCount;
+        });
+
 
         /*
-
 
          for reference.....
 
@@ -57,17 +70,17 @@ app.controller('listingsController', function($scope, $resource){
          Songs.save({title: 'Loser', artist: {id: 3, name: 'Beck'}}) // POST
          */
     };
-    getListings();
+    $scope.getListings();
 
 
-    $scope.getIndexById = function(id){
-        var index = -1;
-        $($scope.listings).each(function(i){
-            if(this.id == id){
-                index = i;
-            }
+    $scope.createBid = function(listingId){
+        bidDialog(null, listingId).result.then(function() {
+            $scope.getListings();
         });
-        return index;
     };
-
+    $scope.createReview = function(listingId){
+        reviewDialog(null, listingId).result.then(function() {
+            $scope.getListings();
+        });
+    };
 });

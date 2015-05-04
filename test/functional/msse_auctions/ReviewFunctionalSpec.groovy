@@ -2,14 +2,21 @@ package msse_auctions
 
 import geb.spock.GebSpec
 import grails.plugin.remotecontrol.RemoteControl
-import msse_auctions.pages.LoginPage
-import msse_auctions.pages.ReviewCreatePage
+import spock.lang.Ignore
 import spock.lang.Stepwise
 
+@Ignore
 @Stepwise
 class ReviewFunctionalSpec extends GebSpec {
 
     def remote = new RemoteControl()
+
+
+    /*
+
+    TODO   remove these (after they've all been replaced)
+           these are the GSP page functional tests
+           they need to be replaced with angular tests
 
     def "displays review Edit fields with listing, reviewer, reviewee, and reviewOf populated"() {
         given:
@@ -41,4 +48,5 @@ class ReviewFunctionalSpec extends GebSpec {
         then:
         $('body').text().toString().indexOf("Not authorized to submit a review for Listing ID 3") != -1
     }
+*/
 }

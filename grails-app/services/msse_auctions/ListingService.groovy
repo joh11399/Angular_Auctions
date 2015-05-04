@@ -45,19 +45,33 @@ class ListingService {
         //the source is not always JSON, so try two different ways to capture the startDate
         def startDate = dest?.startDate
         try {
-            dest.startDate = Date.parse("yyyy-MM-dd'T'HH:mm:ss'Z'", src?.startDate)
+            //dest.startDate = Date.parse("yyyy-MM-dd'T'HH:mm:ss'Z'", src?.startDate)
+
+            startDate = Date.parse("MM/dd/yyyy hh:mm a", src?.startDate)
+
         }
         catch(ex1) {
             try {
-                dest.startDate = src?.startDate
+                startDate = src?.startDate
             }
             catch (ex2) {
             }
         }
 
         dest.startDate = startDate ?: dest.startDate
-        dest.days = src?.days ?: dest?.days
-        dest.startingPrice = src?.startingPrice ?: dest?.startingPrice
+        try{
+            dest.days = src?.days?.toInteger() ?: dest?.days
+        }
+        catch(ex){
+            dest.days = dest?.days
+        }
+        try{
+            dest.startingPrice = src?.startingPrice?.toFloat() ?: dest?.startingPrice
+        }
+        catch(ex){
+            dest.startingPrice = dest?.startingPrice
+        }
+
         dest.deliverOption = src?.deliverOption ?: dest?.deliverOption
         //does not return anything, the dest values have been updated
     }

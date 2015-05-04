@@ -37,7 +37,7 @@ class BidRestController {
         }
     }
 
-    @Secured('permitAll')
+    @Secured('ROLE_USER')
     def save() {
         def account = springSecurityService.currentUser as Account
 
@@ -58,7 +58,7 @@ class BidRestController {
             return
         }
 
-        def highestBidAmount = BidService.getHighestBidAmount(bidInstance.listing)
+        def highestBidAmount = BidService.getNextAvailableBidAmount(bidInstance.listing)
         if(bidInstance.amount < highestBidAmount){
             response.status = 400;
             render "The minimum bid for this listing is \$${highestBidAmount}"
@@ -75,7 +75,7 @@ class BidRestController {
         }
     }
 
-    @Secured('permitAll')
+    @Secured('ROLE_USER')
     def update() {
         if (!params.id) {
             response.status = 400;
@@ -112,7 +112,7 @@ class BidRestController {
     }
 
 
-    @Secured('permitAll')
+    @Secured('ROLE_USER')
     def delete() {
         def account = springSecurityService.currentUser as Account
         if (!params.id) {

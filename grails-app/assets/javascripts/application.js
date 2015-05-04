@@ -11,10 +11,12 @@
 //= require angular-resource/angular-resource
 //= require bootstrap/dist/js/bootstrap
 //= require angular-bootstrap/ui-bootstrap-tpls
+//= require moment/moment
+//= require angular-moment/angular-moment
 //= require_self
 //= require_tree .
 
-var app = angular.module('app', ['ngRoute', 'ngResource', 'ui.bootstrap']);
+var app = angular.module('app', ['ngRoute', 'ngResource', 'ui.bootstrap', 'angularMoment']);
 
 if (typeof jQuery !== 'undefined') {
     (function($) {

@@ -13,32 +13,61 @@ class ListingRestController {
     @SuppressWarnings("GroovyUnusedDeclaration")
     static responseFormats = ['json', 'xml']
 
-    def index(Integer max, String description, boolean includeCompleted) {
+    @Secured('permitAll')
+    def index(Integer max, String description, boolean includeCompleted, boolean returnListingCount) {
         params.max = Math.min(max ?: 10, 100)
+        def _max = params?.max?.toInteger()
+
+        def _offset = 0
+        try {
+            _offset = params?.offset?.toInteger() ?: 0
+        }catch(ex){}
+
+
+        if (returnListingCount) {
+            _max = 9999
+            _offset = 0
+        }
 
         includeCompleted = includeCompleted ?: false
 
         def listings
 
-        if(description&& !includeCompleted) {
-            listings = Listing.findAll("from Listing as l where (l.startDate + l.days) >= :today and l.description like :description order by (l.startDate + l.days)", [today: new Date(), description: '%'+description+'%'], params)
-        }
-        else if(!description && !includeCompleted) {
-            listings = Listing.findAll("from Listing as l where (l.startDate + l.days) >= :today order by (l.startDate + l.days)", [today: new Date()], params)
-        }
-        else if(description && includeCompleted) {
-            listings = Listing.where { description =~ "%${description.toLowerCase()}%" }.list(max: max)
-        }
-        else {
-            listings = Listing.list(max: max)
+        if (description && !includeCompleted) {
+            listings = Listing.findAll("from Listing as l where (l.startDate + l.days) >= :today and l.description like :description order by (l.startDate + l.days)", [today: new Date(), description: '%' + description + '%'], [max: _max, offset: _offset])
+        } else if (!description && !includeCompleted) {
+            listings = Listing.findAll("from Listing as l where (l.startDate + l.days) >= :today order by (l.startDate + l.days)", [today: new Date()], [max: _max, offset: _offset])
+        } else if (description && includeCompleted) {
+            listings = Listing.findAll("from Listing as l where l.description like :description order by (l.startDate + l.days)", [description: '%' + description + '%'], [max: _max, offset: _offset])
+
+            /*listings = Listing.where {
+                description =~ "%${description.toLowerCase()}%"
+            }.list(max: _max, offset: _offset)*/
+        } else {
+
+            listings = Listing.findAll("from Listing as l order by (l.startDate + l.days)", [], [max: _max, offset: _offset])
+
+            //listings = Listing.list(max: _max, offset: _offset)
         }
 
-        listings.each(){
-            ListingService.getListingTimeRemaining(it)
-            BidService.setListingHighestBid(it)
-        }
+        if (returnListingCount) {
 
-        respond listings
+            def listingCount = listings.size()
+
+            render(contentType: 'text/json') {
+                [
+                        'listingCount': listingCount,
+                ]
+            }
+        } else {
+            listings.each() {
+                ListingService.getListingTimeRemaining(it)
+                BidService.setListingHighestBid(it)
+                BidService.setListingHighestBidAmount(it)
+            }
+
+            respond listings
+        }
     }
 
     @Secured('permitAll')
@@ -49,11 +78,14 @@ class ListingRestController {
             response.status = 404;
             render "Not found"
         } else {
+            ListingService.getListingTimeRemaining(listingInstance)
+            BidService.setListingHighestBid(listingInstance)
+
             respond listingInstance
         }
     }
 
-    @Secured('permitAll')
+    @Secured('ROLE_USER')
     def save() {
         def account = springSecurityService.currentUser as Account
 
@@ -80,7 +112,7 @@ class ListingRestController {
         }
     }
 
-    @Secured('permitAll')
+    @Secured('ROLE_USER')
     def update() {
         if (!params.id) {
             response.status = 400;
@@ -112,7 +144,7 @@ class ListingRestController {
         }
     }
 
-    @Secured('permitAll')
+    @Secured('ROLE_USER')
     def delete() {
         if (!params.id) {
             response.status = 400;
@@ -122,6 +154,7 @@ class ListingRestController {
 
         def account = springSecurityService.currentUser as Account
         def listingInstance = Listing.findById(params.id)
+
         if (!listingInstance) {
             response.status = 404
             render "Not found"

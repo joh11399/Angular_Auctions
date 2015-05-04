@@ -16,7 +16,6 @@ class AccountService {
     }
 
     def validateAccount(def accountInstance) {
-
         //.hasErrors() isn't catching issues with null values
         //  when testing, .hasError() will return false, but then a server error will occur when saving.
         if (accountInstance.hasErrors() ||

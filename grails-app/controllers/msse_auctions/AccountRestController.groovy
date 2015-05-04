@@ -25,7 +25,7 @@ class AccountRestController {
         respond accounts
     }
 
-    @Secured('permitAll')
+    @Secured('ROLE_USER')
     def show() {
         def account = springSecurityService.currentUser as Account
         Account accountInstance = Account.findById(params.id)
@@ -79,9 +79,9 @@ class AccountRestController {
         }
     }
 
-    @Secured('permitAll')
+    @Secured('ROLE_USER')
     def update() {
-        def id = request.JSON?.id;
+        def id = request.JSON?.id ?: params.id;
 
         def account = springSecurityService.currentUser as Account
 
@@ -94,6 +94,14 @@ class AccountRestController {
         } else {
             def accountClone = new Account()
             AccountService.copyAccountFromSource(request.JSON, accountClone)
+
+            //due to the problems caused by Spring Security and password encryption/validation,
+            // it's not required that a password is provided when updating an account
+            if(accountClone.password == null &&
+               accountInstance.password != null){
+                accountClone.password = accountInstance.password
+            }
+
             response.status = AccountService.validateAccount(accountClone)
 
             if (response.status == 400) {
@@ -136,7 +144,7 @@ class AccountRestController {
     }
 
 
-    @Secured('permitAll')
+    @Secured('ROLE_USER')
     def delete() {
         def account = springSecurityService.currentUser as Account
         if (!params.id) {
@@ -162,9 +170,18 @@ class AccountRestController {
 
         //all foreign key associations must be deleted as well..
         Bid.findByBidder(accountInstance)*.delete(flush: true)
+
         Review.findByReviewer(accountInstance)*.delete(flush: true)
+
         Review.findByReviewee(accountInstance)*.delete(flush: true)
-        Listing.findBySeller(accountInstance)*.delete(flush: true)
+
+        def accountListings = Listing.findBySeller(accountInstance)
+        accountListings.each(){
+            Bid.findByListing(it)*.delete(flush: true)
+            Review.findByListing(it)*.delete(flush: true)
+        }
+        accountListings*.delete(flush: true)
+
         AccountRole.findByAccount(accountInstance)*.delete(flush: true)
 
         accountInstance.delete(flush: true)

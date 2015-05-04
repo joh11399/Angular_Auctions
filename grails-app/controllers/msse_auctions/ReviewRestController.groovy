@@ -20,7 +20,7 @@ class ReviewRestController  {
         respond reviews
     }
 
-    @Secured('permitAll')
+    @Secured('ROLE_USER')
     def show() {
         def account = springSecurityService.currentUser as Account
         Review reviewInstance = Review.findById(params.id)
@@ -33,7 +33,7 @@ class ReviewRestController  {
         }
     }
 
-    @Secured('permitAll')
+    @Secured('ROLE_USER')
     def save() {
         Review reviewInstance = new Review()
         ReviewService.copyReviewFromSource(request.JSON, reviewInstance)
@@ -66,7 +66,7 @@ class ReviewRestController  {
         }
     }
 
-    @Secured('permitAll')
+    @Secured('ROLE_USER')
     def update() {
         if (!params.id) {
             response.status = 400;
@@ -101,7 +101,7 @@ class ReviewRestController  {
         }
     }
 
-    @Secured('permitAll')
+    @Secured('ROLE_USER')
     def delete() {
         if (!params.id) {
             response.status = 400;

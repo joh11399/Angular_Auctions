@@ -17,9 +17,13 @@
 <a href="#/reviews">reviews</a>
 
 <div ng-controller="loginLinksController" style="display: inline;">
-<a href="#/account" class="loginLink" ng-show="loggedInUser==''">create account</a>
-<a class="loginLink" ng-click="loginLink()" ng-show="loggedInUser==''">login</a>
-<label class="loginLbl" ng-show="loggedInUser!=''">logged in as {{loggedInUser}}</label>
+<a id="createAccountBtn" class="btn btn-default loginLink" href="#/accountEdit" ng-show="loggedInUser==''">create account</a>
+
+    <!-- TODO  ng-show="loggedInUser==''"  the login text doesn't always appear if the user is logged out (or account is deleted)  -->
+    <a id="loginBtn" class="btn btn-primary loginLink" ng-click="loginLink()" >login</a>
+
+<a id="viewAccountBtn" class="btn btn-default loginLink" href="#/account/{{loggedInId}}" ng-show="loggedInUser!=''">view account</a>
+<label id="loginLbl" class="loginLbl" ng-show="loggedInUser!=''">logged in as {{loggedInUser}}</label>
 </div>
 
 <ng-view></ng-view>

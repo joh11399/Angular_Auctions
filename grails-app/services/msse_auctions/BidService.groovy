@@ -3,13 +3,8 @@ package msse_auctions
 class BidService {
 
     def setListingHighestBid(Listing listing){
-
-        //get all bids for this listing
-        def bids = getBids(listing)
-        if(bids.size() > 0){
-
-            //find the bid with the highest amount within bids
-            def bid = getHighestBid(bids)
+        def bid = getHighestBid(listing)
+        if(bid){
 
             listing.highestBidStr = "\$" + bid.amount.round(2) + " - " + bid.bidder
 
@@ -19,6 +14,28 @@ class BidService {
             }
         }
     }
+
+
+    def setListingHighestBidAmount(Listing listing){
+        listing.highestBidAmount = listing.startingPrice
+
+        def bid = getHighestBid(listing)
+        if(bid){
+            listing.highestBidId = bid.id
+            listing.highestBidderId = bid.bidder.id
+            listing.highestBidAmount = bid.amount
+        }
+    }
+
+    def getNextAvailableBidAmount(Listing listing){
+        def highestBidAmount = listing.startingPrice
+        def highestBid = getHighestBid(listing)
+        if(highestBid) {
+            highestBidAmount = highestBid.amount + 0.5
+        }
+        highestBidAmount
+    }
+
 
     def getHighestBid(Listing listing){
         def bids = Bid.findAll("from Bid as b where b.listing.id=:listingId order by dateCreated desc", [listingId: listing?.id])
@@ -36,18 +53,7 @@ class BidService {
     }
 
 
-    def getHighestBidAmount(Listing listing){
-        def highestBidAmount
-        def bids = getBids(listing)
-        if(bids.size() == 0) {
-            highestBidAmount = listing.startingPrice
-        }
-        else{
-            def highestBid = getHighestBid(bids)
-            highestBidAmount = highestBid.amount + 0.5
-        }
-        highestBidAmount
-    }
+    /*
 
     def getBids(Listing listing){
         //get all bids for the specified listing
@@ -71,12 +77,13 @@ class BidService {
         }
         highestBid
     }
+    */
 
     def copyBidFromSource(def src, Bid dest) {
         //if the source does not have a value, attempt to use the existing destination value
         dest.listing = Listing.findById(src.listing.id) ?: dest.listing
         dest.bidder = Account.findById(src.bidder.id) ?: dest.bidder
-        dest.amount = src.amount ?: dest.amount
+        dest.amount = src?.amount?.toFloat() ?: dest.amount
         //does not return anything, the dest values have been updated
     }
 }

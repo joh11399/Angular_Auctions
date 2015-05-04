@@ -28,7 +28,7 @@ class BidController {
         if(listingID) {
             Listing listing = Listing.findById(listingID)
             bid.listing = listing
-            bid.amount = BidService.getHighestBidAmount(listing)
+            bid.amount = BidService.getNextAvailableBidAmount(listing)
         }
         bid.bidder = springSecurityService.currentUser as Account
 
@@ -37,7 +37,7 @@ class BidController {
 
     @Secured(['ROLE_USER'])
     def save(Bid bidInstance) {
-        def highestBidAmount = BidService.getHighestBidAmount(bidInstance.listing)
+        def highestBidAmount = BidService.getNextAvailableBidAmount(bidInstance.listing)
 
         if (bidInstance.hasErrors()) {
             respond bidInstance.errors, view:'create'

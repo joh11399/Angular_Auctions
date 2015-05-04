@@ -1,7 +1,4 @@
-var app = angular.module('app');
-app.controller('accountsController', function($scope, $resource) {
-
-
+angular.module('app').controller('accountsController', function($scope, $resource) {
 
     $scope.alerts = [];
 
