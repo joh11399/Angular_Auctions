@@ -2,18 +2,12 @@ package msse_auctions
 
 import geb.spock.GebSpec
 import grails.plugin.remotecontrol.RemoteControl
-import spock.lang.Ignore
 import msse_auctions.pages.AccountsPage
 import msse_auctions.pages.AccountDetailPage
 import msse_auctions.pages.AccountEditPage
 import spock.lang.Stepwise
 import spock.lang.Unroll
 
-
-
-
-//TODO  remove ignore...
-@Ignore
 @Stepwise
 class AccountFunctionalSpec extends GebSpec {
 
@@ -61,7 +55,6 @@ class AccountFunctionalSpec extends GebSpec {
         password.value()==''
         addressStreet.value()==''
         addressCity.value()==''
-        addressState.value()==''
         addressZip.value()==''
     }
 
@@ -177,7 +170,7 @@ class AccountFunctionalSpec extends GebSpec {
         to AccountsPage
 
         then:
-        waitFor{ $('#accountTable').text().indexOf('AccountFunctionalTest') != -1 }
+        waitFor{ $('#accountsTable').text().indexOf('AccountFunctionalTest') != -1 }
         waitFor {viewAccountBtn.click()}
         at AccountDetailPage
 
@@ -196,7 +189,7 @@ class AccountFunctionalSpec extends GebSpec {
         at AccountsPage
 
         then:
-        waitFor { $('#accountTable').text().indexOf('AccountFunctionalTest') == -1 }
+        waitFor { $('#accountsTable').text().indexOf('AccountFunctionalTest') == -1 }
     }
 
     /*

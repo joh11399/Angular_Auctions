@@ -1,9 +1,10 @@
 <div ng-controller="listingEditController">
     <br>
     <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+    <div ng-form="listingForm">
     <table>
-        <tr><td style="width: 150px;">Name: </td><td><input id="listingName" type="text" ng-model="newListing.name"></td></tr>
-        <tr><td>Description: </td><td><input id="listingDescription" type="text" ng-model="newListing.description"></td></tr>
+        <tr><td style="width: 150px;">Name: </td><td><input id="listingName" type="text" ng-model="newListing.name" required></td></tr>
+        <tr><td>Description: </td><td><input id="listingDescription" type="text" ng-model="newListing.description" required></td></tr>
 
         <tr><td>Start Date: </td><td>
             <span class="input-group" style="width: 183px; padding-top: 25px;">
@@ -17,17 +18,17 @@
             </span>
         </td></tr>
 
-        <tr><td>Days: </td><td><input id="listingDays" type="text" ng-model="newListing.days"></td></tr>
+        <tr><td>Days: </td><td><input id="listingDays" type="text" ng-model="newListing.days" required></td></tr>
 
-        <!--
-        TODO  currency formatting is not working here...
-        <tr><td>Starting Price: </td><td><input type="text" ng-model="newListing.startingPrice | currency"></td></tr>-->
-        <tr><td>Starting Price: </td><td><input id="listingStartingPrice" type="text" ng-model="newListing.startingPrice"></td></tr>
+        <tr><td>Starting Price: </td><td><input id="listingStartingPrice" type="text" ng-model="newListing.startingPrice" required></td></tr>
 
-        <tr><td>Deliver Option: </td><td><input id="listingDeliverOption" type="text" ng-model="newListing.deliverOption"></td></tr>
+        <tr><td>Deliver Option: </td><td><select id="listingDeliverOption" ng-model="newListing.deliverOption" style="width: 183px; height: 28px;">
+            <option>US Only</option><option>Worldwide</option><option>Pick Up Only</option>
+        </select></td></tr>
     </table>
+    </div>
 
     <a href="javascript:history.back();" class="btn btn-default">Close</a>
     <button id="listingDeleteBtn" class="btn btn-default" ng-click="deleteClick()">Delete</button>
-    <button id="listingSaveBtn" ng-click="save()" class="btn btn-primary">Save</button>
+    <button id="listingSaveBtn" ng-click="save()" class="btn btn-primary" ng-disabled="listingForm.$invalid">Save</button>
 </div>

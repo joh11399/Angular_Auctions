@@ -22,6 +22,8 @@ app.controller('listingEditController', function($scope, $resource, $location, $
             $scope.newListing.seller.id = result.data[0].id;
         });
 
+        $scope.newListing.deliverOption = 'US Only';
+
         $scope.today();
         $scope.setMytime();
     }
@@ -93,10 +95,6 @@ app.controller('listingEditController', function($scope, $resource, $location, $
         formatYear: 'yy',
         startingDay: 1
     };
-
-
-
-
 
 
 

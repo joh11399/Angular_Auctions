@@ -1,4 +1,4 @@
-angular.module('app').controller('reviewDialogController', function ($scope, $modalInstance, loginService, listingService, bidService, reviewService, reviewId, listingId) {
+angular.module('app').controller('reviewDialogController', function ($scope, $modalInstance, $resource, loginService, listingService, bidService, reviewService, reviewId, listingId) {
 
     $scope.loggedInId = '';
     $scope.loggedInName = '';
@@ -15,39 +15,51 @@ angular.module('app').controller('reviewDialogController', function ($scope, $mo
         }
         else if(listingId){
 
-            $scope.editReview = {};
+            var Reviews = $resource('api/reviews/');
+            Reviews.query().$promise.then(function(data){
+                $scope.editReview = {};
+                $(data).each(function(i){
+                    if(parseInt(data[i].reviewer.id) == parseInt($scope.loggedInId) &&
+                        parseInt(data[i].listing.id) == parseInt(listingId)){
+                        $scope.editReview = data[i];
+                    }
+                });
 
-            $scope.editReview.thumbs = 'up';
-            $scope.editReview.rating = 5;
-            $scope.editReview.description = '';
+                //if no previous reviews are found  (just test the reviewOf field)
+                //  then populate the fields with default values..
+                if($scope.editReview.reviewOf == null) {
+                    $scope.editReview.thumbs = 'up';
+                    $scope.editReview.rating = 5;
+                    $scope.editReview.description = '';
 
-            $scope.editReview.listing = {};
-            $scope.editReview.listing.id = listingId;
+                    $scope.editReview.listing = {};
+                    $scope.editReview.listing.id = listingId;
 
-            $scope.editReview.reviewer = {};
-            $scope.editReview.reviewer.id = $scope.loggedInId;
+                    $scope.editReview.reviewer = {};
+                    $scope.editReview.reviewer.id = $scope.loggedInId;
 
-            listingService.getListing(listingId).then(function(data){
-                var revieweeId = '';
-                var reviewOf = '';
+                    listingService.getListing(listingId).then(function (data) {
+                        var revieweeId = '';
+                        var reviewOf = '';
 
-                if($scope.loggedInId == data.highestBidderId){
-                    revieweeId = data.seller.id;
-                    reviewOf = 'Seller';
+                        if ($scope.loggedInId == data.highestBidderId) {
+                            revieweeId = data.seller.id;
+                            reviewOf = 'Seller';
+                        }
+                        else {
+                            revieweeId = data.highestBidderId;
+                            reviewOf = 'Buyer';
+                        }
+
+                        $scope.editReview.reviewee = {};
+                        $scope.editReview.reviewee.id = revieweeId;
+
+                        $scope.editReview.reviewOf = reviewOf;
+
+                    });
                 }
-                else{
-                    revieweeId= data.highestBidderId;
-                    reviewOf = 'Buyer';
-                }
-
-                $scope.editReview.reviewee = {};
-                $scope.editReview.reviewee.id = revieweeId;
-
-                $scope.editReview.reviewOf = reviewOf;
-
             });
         }
-
     });
 
 
@@ -91,22 +103,13 @@ angular.module('app').controller('reviewDialogController', function ($scope, $mo
 
 
     $scope.ok = function () {
-
         if($scope.editReview.id==null){
-
-
-            console.log($scope.editReview);
-
-
             reviewService.createReview($scope.editReview).then(function(){
                 //$scope.alerts.push({type:'success', msg:'Bid Updated'});
                 $modalInstance.close();
 
             }, function(result){
-                //$scope.alerts.push({type:'danger', msg:'Bid Update Failed.. '+result});
-
-                console.log(result);
-
+                $scope.alerts.push({type:'danger', msg:'Review Update Failed.. '+result});
             });
 
         }
@@ -116,10 +119,7 @@ angular.module('app').controller('reviewDialogController', function ($scope, $mo
                 $modalInstance.close();
 
             }, function(result){
-
-                console.log(result);
-
-                //$scope.alerts.push({type:'danger', msg:'Bid Update Failed.. '+result});
+                $scope.alerts.push({type:'danger', msg:'Review Update Failed.. '+result});
             });
         }
     };

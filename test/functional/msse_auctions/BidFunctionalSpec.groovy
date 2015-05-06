@@ -2,14 +2,9 @@ package msse_auctions
 
 import geb.spock.GebSpec
 import grails.plugin.remotecontrol.RemoteControl
-import spock.lang.Ignore
 import msse_auctions.pages.ListingsPage
 import spock.lang.Stepwise
 
-
-
-//TODO  remove ignore...
-@Ignore
 @Stepwise
 class BidFunctionalSpec  extends GebSpec {
 

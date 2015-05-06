@@ -106,10 +106,10 @@ E-mail:
             </div>
         </td></tr>
 
-        <tr><td>Address Street: </td><td><input name="accountAddressStreet" type="text" ng-model="newAccount.addressStreet"></td></tr>
-        <tr><td>Address City: </td><td><input name="accountAddressCity" type="text" ng-model="newAccount.addressCity"></td>
-        <tr><td>Address State: </td><td><input name="accountAddressState" type="text" ng-model="newAccount.addressState"></td></tr>
-        <tr><td>Address Zip: </td><td><input name="accountAddressZip" type="text" ng-model="newAccount.addressZip"></td></tr>
+        <tr><td>Address Street: </td><td><input name="accountAddressStreet" type="text" ng-model="newAccount.addressStreet" required></td></tr>
+        <tr><td>Address City: </td><td><input name="accountAddressCity" type="text" ng-model="newAccount.addressCity" required></td>
+        <tr><td>Address State: </td><td><input name="accountAddressState" type="text" ng-model="newAccount.addressState" typeahead="state for state in states | filter:$viewValue | limitTo:8" required></td></tr>
+        <tr><td>Address Zip: </td><td><input name="accountAddressZip" type="text" ng-model="newAccount.addressZip" required></td></tr>
     </table>
     </div>
     <a href="javascript:history.back();" class="btn btn-default" style="margin-right: 6px;">Close</a>
@@ -120,5 +120,4 @@ the ng-disabled directive is not using accountForm.$invalid because an invalid, 
   ..if the user does not change the encrypted, 60 character password  the form can still be submitted
 -->
     <button id="accountEditSubmitBtn" class="btn btn-primary" ng-disabled="accountForm.accountUsername.$invalid || accountForm.accountEmail.$invalid || accountForm.accountName.$invalid || (accountForm.accountPassword.$dirty && accountForm.accountPassword.$invalid)" ng-click="save()">Save</button>
-</form>
 </div>

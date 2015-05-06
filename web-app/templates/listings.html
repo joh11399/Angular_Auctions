@@ -4,7 +4,7 @@
     <input type="checkbox" ng-model="includeCompleted" ng-change="getListings()" style="margin-left: 25px; cursor: pointer;" /><span id="listingsIncludeCompletedChk" ng-click="includeCompleted = !includeCompleted; getListings();" style="cursor: pointer;">Include Completed Listings</span>
     <a id="createListingBtn" href="#/listingCreate" class="btn btn-default" style="margin-left: 25px;">Create Listing</a>
 
-    <table>
+    <table id="listingsTable">
         <thead>
         <tr>
             <th></th><th>Name</th><th>Highest Bid</th><th>Time Remaining</th><th>Description</th><th>Seller ID</th>

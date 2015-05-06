@@ -2,51 +2,119 @@ package msse_auctions
 
 import geb.spock.GebSpec
 import grails.plugin.remotecontrol.RemoteControl
-import spock.lang.Ignore
+import msse_auctions.pages.ListingsPage
 import spock.lang.Stepwise
 
-@Ignore
 @Stepwise
 class ReviewFunctionalSpec extends GebSpec {
 
+    @Delegate
+    static FunctionalTestUtils utils = new FunctionalTestUtils()
+
     def remote = new RemoteControl()
 
+    def setupSpec() {
+        if (!utils) {
+            utils = new FunctionalTestUtils()
+        }
+        setupSampleData()
+    }
+
+
+    def 'verify review button is not displayed on open listings'() {
+        when:
+        to ListingsPage
+
+        //TODO
+        //this isn't working...
+        //setupLogIn('me', 'abcd1234')
+
+
+        loginBtn.click()
+        loginUsername.value("me")
+        loginPassword.value("abcd1234")
+        loginSubmitBtn.click()
+
+        then: 'verify the open listing is shown on the page'
+
+        waitFor { $('body').text().indexOf('testOpen') != -1 }
+        waitFor { $('#listingReviewBtn' + listingOpenId).css('display') == 'none' }
+
+    }
+
+    def 'open review dialog from the listings page'() {
+        when:
+        to ListingsPage
+
+        then: 'verify user is logged in'
+        waitFor { loginLbl.text().toString() == "logged in as me" }
+        waitFor { loginLbl.css("display") == "block" }
+
+        waitFor { includeCompleted.css('display') == 'inline' }
+        waitFor { includeCompleted.click() }
+
+
+        when: 'click review button on completed listing'
+        waitFor { $('#listingReviewBtn' + listingCompletedId).css('display') == 'inline-block' }
+        waitFor { $('#listingReviewBtn' + listingCompletedId).click() }
+
+        then: 'verify dialog is displayed'
+        waitFor { $('body').text().indexOf('Review') != -1 }
+        waitFor { reviewSubmitBtn.css('display') == 'inline-block' }
+
+        cleanup:
+        reviewCancelBtn.click()
+    }
 
     /*
-
-    TODO   remove these (after they've all been replaced)
-           these are the GSP page functional tests
-           they need to be replaced with angular tests
-
-    def "displays review Edit fields with listing, reviewer, reviewee, and reviewOf populated"() {
-        given:
-        to LoginPage
-        login('me', 'abcd1234')
-
-        when:
-        to ReviewCreatePage, listingID: 1
+    def 'display bid minimum amount warning'() {
+        when: 'click bid button on open listing'
+        to ListingsPage
+        waitFor { $('#listingBidBtn' + listingOpenId).css('display') == 'inline-block' }
+        waitFor { $('#listingBidBtn' + listingOpenId).click() }
 
         then:
-        //the following fields should not be changed once the Edit page is opened
-        listingLbl.text() == 'testCompleted'
-        listing.value() == '1'
-        reviewerLbl.text() == 'Me Test'
-        reviewer.value() == '1'
-        revieweeLbl.text() == 'Test 2'
-        reviewee.value() == '2'
-        reviewOfLbl.text() == 'Buyer'
-        reviewOf.value() == 'Buyer'
+        waitFor { bidAmount.value() != '' }
+        waitFor { bidErrorLbl.css('display') == 'none' }
 
-        $('body').text().toString().indexOf("Not authorized to submit a review for Listing ID 1") == -1
-    }
-
-
-    def "does not display the review Edit page for unauthorized users"() {
         when:
-        to ReviewCreatePage, listingID: 3
+        float amount = Float.parseFloat(bidAmount.value())
+
+        //I'm still not able to get float precision working to display 2 decimal places.
+        //  I know this value is 10.00, so I'm just adding the last zero on
+        String amountStr = amount.toString() + '0'
+
+        bidAmount.value(amount - 1)
 
         then:
-        $('body').text().toString().indexOf("Not authorized to submit a review for Listing ID 3") != -1
+        waitFor { bidErrorLbl.css('display') == 'inline' }
+        waitFor { bidErrorLbl.text() == 'The minimum bid is $' + amountStr }
+
+        cleanup:
+        bidCancelBtn.click()
     }
-*/
+    */
+
+
+    def 'successfully create a review'() {
+        when: 'click review button on completed listing'
+        to ListingsPage
+        waitFor { includeCompleted.css('display') == 'inline' }
+        waitFor { includeCompleted.click() }
+        waitFor { $('#listingReviewBtn' + listingCompletedId).css('display') == 'inline-block' }
+        waitFor { $('#listingReviewBtn' + listingCompletedId).click() }
+
+        then:
+        waitFor { reviewOfLbl.text() == 'Buyer' }
+        reviewThumbsDown.click()
+        reviewDescription.value('good job, I guess..')
+        waitFor { reviewSubmitBtn.click() }
+
+        when: 'once a review is created, the user can click the review button again to access that review'
+        waitFor { $('#listingReviewBtn' + listingCompletedId).click() }
+
+        then:
+        reviewThumbsUp.click()
+        waitFor { reviewSubmitBtn.click() }
+    }
 }

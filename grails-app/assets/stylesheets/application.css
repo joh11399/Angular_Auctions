@@ -14,6 +14,10 @@
 *= require_self
 */
 
+header{
+    height: 50px;
+}
+
 .loginLink{
     float: right;
     margin-right: 10px;
@@ -27,4 +31,3 @@
 }
 
 input.ng-invalid.ng-dirty { background-color: #ff9a9a; }
-/*.ng-valid.ng-dirty { background-color: lightgreen; }*/

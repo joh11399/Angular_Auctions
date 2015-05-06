@@ -26,7 +26,16 @@ class ListingsPage extends Page {
         bidSubmitBtn { $("#bidSubmitBtn") }
         bidCancelBtn { $('#bidCancelBtn') }
 
-        //listing_timeRemaining { $(".timeRemaining") }
+        //reviewErrorLbl { $('#reviewErrorLbl') }
+        reviewSubmitBtn { $("#reviewSubmitBtn") }
+        reviewCancelBtn { $('#reviewCancelBtn') }
+
+        reviewOfLbl { $('#reviewOfLbl') }
+        reviewThumbsUp { $('#reviewThumbsUp') }
+        reviewThumbsDown { $('#reviewThumbsDown') }
+        reviewDescription { $("input[name='reviewDescription']") }
+
+
     }
 }
 
@@ -62,5 +71,7 @@ class ListingEditPage extends Page {
 
         listingSaveBtn { $('#listingSaveBtn') }
         listingDeleteBtn { $('#listingDeleteBtn') }
+        confirmDeleteBtn { waitFor { $('#confirmDeleteBtn') }}
+        confirmCancelBtn { waitFor { $('#confirmCancelBtn') }}
     }
 }

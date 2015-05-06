@@ -1,13 +1,10 @@
 package msse_auctions
 
 import grails.plugin.remotecontrol.RemoteControl
-import spock.lang.Ignore
 import spock.lang.Specification
 import spock.lang.Stepwise
 import spock.lang.Unroll
 
-//TODO  remove ignore...
-@Ignore
 @Stepwise
 class AccountRestFunctionalSpec extends Specification {
 
