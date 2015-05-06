@@ -188,16 +188,10 @@ class ReviewRestFunctionalSpec extends Specification {
         resp.status == respStatus
 
         //cannot successfully delete any of the following
-        // 0 and "" for obvious reasons, and username:'me' isn't the owner of reviewId
         where:
         urlReviewId | respStatus
         0           | 404
         reviewId    | 401
-
-        /*
-        TODO  this is returning a 405   not sure why
-        ""          | 403
-        */
     }
 
 

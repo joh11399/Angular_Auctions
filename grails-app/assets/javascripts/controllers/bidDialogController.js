@@ -36,30 +36,17 @@ angular.module('app').controller('bidDialogController', function ($scope, $modal
     };
 
     $scope.ok = function () {
-
         if($scope.editBid.id==null){
-
-            console.log($scope.editBid);
-
             bidService.createBid($scope.editBid).then(function(){
-                //$scope.alerts.push({type:'success', msg:'Bid Updated'});
                 $modalInstance.close();
 
-            }, function(result){
-                //$scope.alerts.push({type:'danger', msg:'Bid Update Failed.. '+result});
             });
         }
         else{
             bidService.updateBid($scope.editBid).then(function(){
-                //$scope.alerts.push({type:'success', msg:'Bid Updated'});
                 $modalInstance.close();
-
-            }, function(result){
-                //$scope.alerts.push({type:'danger', msg:'Bid Update Failed.. '+result});
             });
         }
-
-
     };
 
     $scope.cancel = function () {

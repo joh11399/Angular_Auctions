@@ -191,43 +191,4 @@ class AccountFunctionalSpec extends GebSpec {
         then:
         waitFor { $('#accountsTable').text().indexOf('AccountFunctionalTest') == -1 }
     }
-
-    /*
-    TODO  it's not appending the id to the URL correctly......    maybe skip these
-
-    def "does not display details for unauthorized account"() {
-        when:
-        to AccountDetailPage, id: accountId2
-
-        then:
-        $('body').text().toString().indexOf("Not authorized to view account ${accountId2}") != -1
-    }
-
-
-    def "displays account Edit fields for an authorized user"() {
-        when:
-        to AccountEditPage, id: accountId
-
-        then:
-        email.text() == 'me@test.com'
-        name.text() == 'Me Test'
-        Date dateCreatedDate = accountDateCreated
-        Date lastUpdatedDate = accountLastUpdated
-        dateCreated.text() == dateCreatedDate.format("M/dd/yy h:mm a")
-        lastUpdated.text() == lastUpdatedDate.format("M/dd/yy h:mm a")
-
-        $('body').text().toString().indexOf("Not authorized to view account ${accountId}") == -1
-    }
-
-
-    def "does not display Edit page for unauthorized account"() {
-        when:
-        to AccountEditPage, id: accountId2
-
-        then:
-        $('body').text().toString().indexOf("Not authorized to view account ${accountId2}") != -1
-    }
-
-    */
-
 }

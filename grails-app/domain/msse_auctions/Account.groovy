@@ -78,14 +78,10 @@ class Account {
         def containsNumber = pw.matches(".*\\d.*")
         def containsLetter = pw ==~ /.*[a-zA-Z].*/
 
-        //TODO  you removed this to get past the complexity/encryption issues...........
         return (validPasswordLength && containsNumber && containsLetter)
     }
 
 	protected void encodePassword() {
-
-        //TODO,  encoding the password causes issues with angular
-
         password = springSecurityService?.passwordEncoder ? springSecurityService.encodePassword(password) : password
 	}
 }

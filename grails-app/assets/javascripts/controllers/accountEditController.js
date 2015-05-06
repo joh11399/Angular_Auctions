@@ -67,10 +67,6 @@ app.controller('accountEditController', function($scope, $location, $resource, $
 
     $scope.deleteClick = function(){
         confirmDelete().result.then(function() {
-
-            console.log('delete....');
-            console.log($routeParams.id);
-
             accountService.deleteAccount($routeParams.id).then(
                 function(){
                     $location.path("accounts");

@@ -30,47 +30,24 @@ app.controller('listingEditController', function($scope, $resource, $location, $
 
     $scope.save = function(){
 
-        //reset alerts
-        //  the user may have previously gotten an error but not cleared it
         $scope.alerts = [];
 
         $scope.newListing.startDate = moment($scope.dt).format('MM/DD/YYYY ') + moment($scope.mytime).format('hh:mm a');
 
-        console.log($scope.newListing.startDate );
-
         if($scope.newListing.id) {
-
-                    listingService.updateListing($scope.newListing).then(function(){
-                            $location.path("listings");
-                        },
-                        function (result) {
-
-                            console.log('update...FAILED......');
-                            console.log(result.responseText);
-                            console.log(result.status);
-
-                            console.log(result); //this returns the indexed logon page
-
-                            $scope.alerts.push({type: 'danger', msg: 'there was a problem updating this listing.'});
-
-                        });
+                listingService.updateListing($scope.newListing).then(function(){
+                        $location.path("listings");
+                    },
+                    function () {
+                        $scope.alerts.push({type: 'danger', msg: 'there was a problem updating this listing.'});
+                    });
                 }
         else {
-            console.log($scope.newListing);
-
             listingService.createListing($scope.newListing).then(function(){
                     $location.path("listings");
                 },
-                function(result){
-
-                    console.log('create...FAILED......');
-                    console.log(result.responseText);
-                    console.log(result.status);
-
-                    console.log(result); //this returns the indexed logon page
-
+                function(){
                     $scope.alerts.push({type: 'danger', msg: 'there was a problem creating this listing.'});
-
                 });
         }
     };
@@ -114,10 +91,7 @@ app.controller('listingEditController', function($scope, $resource, $location, $
                 function(){
                     $location.path("listings");
                 }, function(result){
-                    //$scope.alerts.push({type: 'danger', msg: result.status + ': '+ result.statusText});
-
-                    console.log(result);
-
+                    $scope.alerts.push({type: 'danger', msg: result.status + ': '+ result.statusText});
                 });
         });
     };

@@ -25,11 +25,6 @@ class ReviewFunctionalSpec extends GebSpec {
         when:
         to ListingsPage
 
-        //TODO
-        //this isn't working...
-        //setupLogIn('me', 'abcd1234')
-
-
         loginBtn.click()
         loginUsername.value("me")
         loginPassword.value("abcd1234")

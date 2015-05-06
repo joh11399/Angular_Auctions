@@ -1,5 +1,4 @@
-var app = angular.module('app');
-app.controller('listingsController', function($scope, $resource, bidDialog, reviewDialog, loginService){
+angular.module('app').controller('listingsController', function($scope, $resource, bidDialog, reviewDialog, loginService){
 
     $scope.itemsPerPage = 10;
     $scope.currentPage = 1;
@@ -52,23 +51,6 @@ app.controller('listingsController', function($scope, $resource, bidDialog, revi
         Listings.get({description: $scope.description, includeCompleted: $scope.includeCompleted, returnListingCount: true}).$promise.then(function(data){
             $scope.totalItems = data.listingCount;
         });
-
-
-        /*
-
-         for reference.....
-
-         $scope.listings.$promise.then(function(result) {
-         console.log('promise complete!');
-         });
-
-
-         Songs.get({id:33}); // returns object returned from of GET at songs/33
-         Songs.query(); // returns array returned from GET at songs/
-         Songs.remove({id:22}) // sends a DELETE to songs/22
-         Songs.delete({id:44}) // sends a DELETE to songs/22
-         Songs.save({title: 'Loser', artist: {id: 3, name: 'Beck'}}) // POST
-         */
     };
     $scope.getListings();
 

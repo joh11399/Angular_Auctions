@@ -74,8 +74,6 @@ class AccountRestController {
                     render "Invalid password.  Passwords must be between 8-16 characters, containing a number and a letter."
                 }
             }
-        }else{
-            //TODO   no valid ID provided....
         }
     }
 

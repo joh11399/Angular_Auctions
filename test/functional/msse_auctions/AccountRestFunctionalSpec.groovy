@@ -23,8 +23,6 @@ class AccountRestFunctionalSpec extends Specification {
     }
 
 
-
-
     def 'returns account list'() {
         given:
         setupLogIn('me', 'abcd1234')
@@ -211,11 +209,6 @@ class AccountRestFunctionalSpec extends Specification {
         urlAccountId    | respStatus
         0               | 404
         accountTest1.id | 401
-
-        /*
-        TODO  this is returning a 405...?
-        ""              | 403
-        */
     }
 
     def 'delete an account'() {

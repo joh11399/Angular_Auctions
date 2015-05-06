@@ -141,10 +141,6 @@ def setupSpec() {
         urlBidId | respStatus
         0        | 404
         bidId    | 401
-        /*
-        TODO  this is returning a 405...?
-        ""        |   403
-        */
     }
 
     def 'delete a bid'() {

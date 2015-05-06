@@ -11,20 +11,8 @@ angular.module('app').controller('reviewsController', function($scope, $resource
 
     $scope.editReviewClick = function(reviewId, bidAmount){
         reviewDialog(reviewId, bidAmount).result.then(function() {
-
-
-            console.log('here....');
-
-            /*accountService.deleteAccount($routeParams.id).then(
-             function(){
-             $location.path("accounts");
-             }, function(result){
-             $scope.alerts.push({type: 'danger', msg: result.status + ': '+ result.statusText});
-             });
-             */
         });
     };
-
 
     $scope.editReview = function(reviewId){
         reviewDialog(reviewId, null).result.then(function() {
