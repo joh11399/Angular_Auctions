@@ -120,7 +120,7 @@ class AccountRestFunctionalSpec extends Specification {
         when:
         //now log in as this new user before viewing the account details
         setupLogIn('testAccount', 'abcd1234')
-        resp = doGet("api/accounts/${resp.data.id}" as String)
+        resp = utils.doGet("api/accounts/${resp.data.id}" as String)
 
         then:
         resp.status == 200
@@ -183,7 +183,7 @@ class AccountRestFunctionalSpec extends Specification {
         resp.data.id
 
         when:
-        resp = doGet("api/accounts/${resp.data.id}" as String)
+        resp = utils.doGet("api/accounts/${resp.data.id}" as String)
 
         then:
         resp.status == 200
