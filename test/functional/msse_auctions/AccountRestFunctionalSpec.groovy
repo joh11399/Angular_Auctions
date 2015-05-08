@@ -224,7 +224,7 @@ class AccountRestFunctionalSpec extends Specification {
         resp.data == "Success!  Account ID ${deleteAccountId} has been deleted."
 
         when:
-        resp = doGet("api/accounts/${deleteAccountId}" as String)
+        resp = utils.doGet("api/accounts/${deleteAccountId}" as String)
 
         then:
         resp.status == 404
