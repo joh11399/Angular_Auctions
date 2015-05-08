@@ -43,7 +43,7 @@ def setupSpec() {
         setupLogIn('me', 'abcd1234')
 
         when:
-        def resp = doGet("api/bids/${bidId}" as String)
+        def resp = utils.doGet("api/bids/${bidId}" as String)
 
         then:
         resp.status == 200
@@ -54,7 +54,7 @@ def setupSpec() {
     def 'unsuccessfully create a bid - not logged in'() {
         when:
         setupLogOut('me')
-        def resp = doJsonPost('api/bids', [listing: [id: listingOpenId], bidder: [id: accountTest1.id], amount: 10.00])
+        def resp = utils.doJsonPost('api/bids', [listing: [id: listingOpenId], bidder: [id: accountTest1.id], amount: 10.00])
 
         then: 'the page redirects to the login page'
         resp.status == 302
@@ -67,7 +67,7 @@ def setupSpec() {
         setupLogIn('me', 'abcd1234')
 
         when:
-        def resp = doJsonPost('api/bids', [listing: [id: listingTestId], bidder: [id: bidderTestId], amount: amount])
+        def resp = utils.doJsonPost('api/bids', [listing: [id: listingTestId], bidder: [id: bidderTestId], amount: amount])
 
         then:
         resp.status == respStatus
@@ -82,14 +82,14 @@ def setupSpec() {
 
     def 'successfully create a bid'() {
         when:
-        def resp = doJsonPost('api/bids', [listing: [id: listingOpenId], bidder: [id: accountId], amount: 15.00])
+        def resp = utils.doJsonPost('api/bids', [listing: [id: listingOpenId], bidder: [id: accountId], amount: 15.00])
 
         then:
         resp.status == 201
         resp.data.id
 
         when:
-        resp = doGet("api/bids/${resp.data.id}" as String)
+        resp = utils.doGet("api/bids/${resp.data.id}" as String)
 
         then:
         resp.status == 200
@@ -105,7 +105,7 @@ def setupSpec() {
 
     def 'unsuccessfully create a bid - bid is less than $0.50 more than the highest bid'() {
         when:
-        def resp = doJsonPost('api/bids', [listing: [id: listingOpenId], bidder: [id: accountId], amount: 15.25])
+        def resp = utils.doJsonPost('api/bids', [listing: [id: listingOpenId], bidder: [id: accountId], amount: 15.25])
 
         then:
         resp.status == 400
@@ -119,7 +119,7 @@ def setupSpec() {
             Bid.findByListingAndBidder( Listing.findByName('testOpen'), Account.findByUsername('me') ).id
         } as Integer
         setupLogOut('me')
-        def resp = doJsonPut("api/bids/${bidTestId}", [listing: [id: listingOpenId], bidder: [id: accountTest1.id], amount: 20.00])
+        def resp = utils.doJsonPut("api/bids/${bidTestId}", [listing: [id: listingOpenId], bidder: [id: accountTest1.id], amount: 20.00])
 
         then: 'the page redirects to the login page'
         resp.status == 302
@@ -132,7 +132,7 @@ def setupSpec() {
         setupLogIn(accountTest1.username, accountTest1.password)
 
         when:
-        def resp = doJsonDelete("api/bids/" + urlBidId, [])
+        def resp = utils.doJsonDelete("api/bids/" + urlBidId, [])
 
         then:
         resp.status == respStatus
@@ -152,14 +152,14 @@ def setupSpec() {
         def deleteBidId = remote {
             Bid.findByListingAndBidder(Listing.findByName('testOpen'), Account.findByUsername('me')).id
         } as Integer
-        def resp = doJsonDelete("api/bids/${deleteBidId}", [])
+        def resp = utils.doJsonDelete("api/bids/${deleteBidId}", [])
 
         then:
         resp.status == 200
         resp.data == "Success!  Bid ID ${deleteBidId} has been deleted."
 
         when:
-        resp = doGet("api/bids/${deleteBidId}" as String)
+        resp = utils.doGet("api/bids/${deleteBidId}" as String)
 
         then:
         resp.status == 404

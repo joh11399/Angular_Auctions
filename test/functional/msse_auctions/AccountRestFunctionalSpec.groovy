@@ -42,7 +42,7 @@ class AccountRestFunctionalSpec extends Specification {
         setupLogIn('me', 'abcd1234')
 
         when:
-        def resp = doGet("api/accounts/${accountId}" as String)
+        def resp = utils.doGet("api/accounts/${accountId}" as String)
 
         then:
         resp.status == 200
@@ -56,7 +56,7 @@ class AccountRestFunctionalSpec extends Specification {
 
         when:
         //accountTest1 is logged in.  accountTest2 cannot access this account
-        def resp = doGet("api/accounts/${accountTest2.id}" as String)
+        def resp = utils.doGet("api/accounts/${accountTest2.id}" as String)
 
         then:
         resp.status == 401
@@ -66,7 +66,7 @@ class AccountRestFunctionalSpec extends Specification {
     @Unroll
     def 'unsuccessfully create an account'() {
         when:
-        def resp = doJsonPost('api/accounts', [username: username, password: password, email: email, name: name, addressStreet: addressStreet, addressCity: addressCity, addressState: addressState, addressZip: addressZip])
+        def resp = utils.doJsonPost('api/accounts', [username: username, password: password, email: email, name: name, addressStreet: addressStreet, addressCity: addressCity, addressState: addressState, addressZip: addressZip])
 
         then:
         resp.status == respStatus
@@ -111,7 +111,7 @@ class AccountRestFunctionalSpec extends Specification {
 
     def 'successfully create an account'() {
         when:
-        def resp = doJsonPost('api/accounts', [username: 'testAccount', password: 'abcd1234', email: 'testAccount@johnson.com', name: 'Dan', addressStreet: '123 Test St', addressCity: '456', addressState: 'MN', addressZip: '12345' ])
+        def resp = utils.doJsonPost('api/accounts', [username: 'testAccount', password: 'abcd1234', email: 'testAccount@johnson.com', name: 'Dan', addressStreet: '123 Test St', addressCity: '456', addressState: 'MN', addressZip: '12345' ])
 
         then:
         resp.status == 201
@@ -137,7 +137,7 @@ class AccountRestFunctionalSpec extends Specification {
         setupLogOut('me')
 
         when:
-        def resp = doJsonPut("api/accounts/${accountTest1.id}", [username: 'me', password: 'abcd1234', email: 'updatedEmail@test.com', name: 'Me Test', addressStreet: '456 Test St', addressCity: '789', addressState: 'MN', addressZip: '12345'])
+        def resp = utils.doJsonPut("api/accounts/${accountTest1.id}", [username: 'me', password: 'abcd1234', email: 'updatedEmail@test.com', name: 'Me Test', addressStreet: '456 Test St', addressCity: '789', addressState: 'MN', addressZip: '12345'])
 
         then: 'the page redirects to the login page'
         resp.status == 302
@@ -151,7 +151,7 @@ class AccountRestFunctionalSpec extends Specification {
         setupLogIn('me', 'abcd1234')
 
         when:
-        def resp = doJsonPut("api/accounts/${account}", [username: username, password: password, email: email, name: name, addressStreet: addressStreet, addressCity: addressCity, addressState: addressState, addressZip: addressZip])
+        def resp = utils.doJsonPut("api/accounts/${account}", [username: username, password: password, email: email, name: name, addressStreet: addressStreet, addressCity: addressCity, addressState: addressState, addressZip: addressZip])
 
         then:
         resp.status == respStatus
@@ -176,7 +176,7 @@ class AccountRestFunctionalSpec extends Specification {
         def testAccountId = remote {
             Account.findByUsername('testAccount').id
         }
-        def resp = doJsonPut("api/accounts/${testAccountId}", [username: 'testAccount', password: 'abcd1234', email: 'testAccount@test.com', name: 'Test Account', addressStreet: '456 Test St', addressCity: '789', addressState: 'MN', addressZip: '12345' ])
+        def resp = utils.doJsonPut("api/accounts/${testAccountId}", [username: 'testAccount', password: 'abcd1234', email: 'testAccount@test.com', name: 'Test Account', addressStreet: '456 Test St', addressCity: '789', addressState: 'MN', addressZip: '12345' ])
 
         then:
         resp.status == 200
@@ -199,7 +199,7 @@ class AccountRestFunctionalSpec extends Specification {
 
     def 'unsuccessfully delete an account'() {
         when:
-        def resp = doJsonDelete("api/accounts/" + urlAccountId, [])
+        def resp = utils.doJsonDelete("api/accounts/" + urlAccountId, [])
 
         then:
         resp.status == respStatus
@@ -217,7 +217,7 @@ class AccountRestFunctionalSpec extends Specification {
         def deleteAccountId = remote {
             Account.findByUsername('testAccount').id
         }
-        def resp = doJsonDelete("api/accounts/" + deleteAccountId, [])
+        def resp = utils.doJsonDelete("api/accounts/" + deleteAccountId, [])
 
         then:
         resp.status == 200

@@ -25,7 +25,7 @@ class ReviewRestFunctionalSpec extends Specification {
 
     def 'returns review list'() {
         when:
-        def resp = doGet('api/reviews')
+        def resp = utils.doGet('api/reviews')
 
         then:
         resp.status == 200
@@ -36,7 +36,7 @@ class ReviewRestFunctionalSpec extends Specification {
 
     def 'returns review detail'() {
         when:
-        def resp = doGet("api/reviews/${reviewId}" as String)
+        def resp = utils.doGet("api/reviews/${reviewId}" as String)
 
         then:
         resp.status == 200
@@ -50,7 +50,7 @@ class ReviewRestFunctionalSpec extends Specification {
         setupLogOut('me')
 
         when:
-        def resp = doJsonPost('api/reviews', [listing: [id: listingCompletedId as String], reviewer: [id: accountTest1.id], reviewee: [id: accountTest2.id], reviewOf: 'Buyer', rating: 4, thumbs: 'up' , description: 'ok.'])
+        def resp = utils.doJsonPost('api/reviews', [listing: [id: listingCompletedId as String], reviewer: [id: accountTest1.id], reviewee: [id: accountTest2.id], reviewOf: 'Buyer', rating: 4, thumbs: 'up' , description: 'ok.'])
 
         then: 'the page redirects to the login page'
         resp.status == 302
@@ -63,7 +63,7 @@ class ReviewRestFunctionalSpec extends Specification {
         setupLogIn(accountTest1.username, accountTest1.password)
 
         when:
-        def resp = doJsonPost('api/reviews', [listing: [id: listingId], reviewer: [id: reviewerId], reviewee: [id: revieweeId], reviewOf: reviewOf, rating: rating, thumbs: thumbs, description: description])
+        def resp = utils.doJsonPost('api/reviews', [listing: [id: listingId], reviewer: [id: reviewerId], reviewee: [id: revieweeId], reviewOf: reviewOf, rating: rating, thumbs: thumbs, description: description])
 
         then:
         resp.status == respStatus
@@ -98,14 +98,14 @@ class ReviewRestFunctionalSpec extends Specification {
         setupLogIn(loginUsername, loginPassword)
 
         when:
-        def resp = doJsonPost('api/reviews', [listing: [id: listingId], reviewer: [id: reviewerId], reviewee: [id: revieweeId], reviewOf: reviewOf, rating: rating, thumbs: thumbs, description: description])
+        def resp = utils.doJsonPost('api/reviews', [listing: [id: listingId], reviewer: [id: reviewerId], reviewee: [id: revieweeId], reviewOf: reviewOf, rating: rating, thumbs: thumbs, description: description])
 
         then:
         resp.status == respStatus
         resp.data.id
 
         when:
-        resp = doGet("api/reviews/${resp.data.id}" as String)
+        resp = utils.doGet("api/reviews/${resp.data.id}" as String)
 
         then:
         resp.status == 200
@@ -131,7 +131,7 @@ class ReviewRestFunctionalSpec extends Specification {
         setupLogOut('me')
 
         when:
-        def resp = doJsonPut("api/reviews/${reviewTestId}", [listing: [id: 5], reviewer: [id: accountTest1.id], reviewee: [id: accountTest2.id], reviewOf: 'Buyer', rating: 4, thumbs: 'up', description: 'ok.'])
+        def resp = utils.doJsonPut("api/reviews/${reviewTestId}", [listing: [id: 5], reviewer: [id: accountTest1.id], reviewee: [id: accountTest2.id], reviewOf: 'Buyer', rating: 4, thumbs: 'up', description: 'ok.'])
 
         then: 'the page redirects to the login page'
         resp.status == 302
@@ -145,7 +145,7 @@ class ReviewRestFunctionalSpec extends Specification {
         setupLogIn(accountTest1.username, accountTest1.password)
 
         when:
-        def resp = doJsonPut("api/reviews/${reviewTestId}", [listing: [id: 5], reviewer: [id: accountTest1.id], reviewee: [id: accountTest2.id], reviewOf: 'Buyer', rating: 4, thumbs: 'up', description: 'ok.'])
+        def resp = utils.doJsonPut("api/reviews/${reviewTestId}", [listing: [id: 5], reviewer: [id: accountTest1.id], reviewee: [id: accountTest2.id], reviewOf: 'Buyer', rating: 4, thumbs: 'up', description: 'ok.'])
 
         then:
         resp.status == 400
@@ -160,7 +160,7 @@ class ReviewRestFunctionalSpec extends Specification {
         setupLogIn(accountTest1.username, accountTest1.password)
 
         when:
-        def resp = doJsonPut("api/reviews/${reviewTestId}", [listing: [id: listingCompletedId], reviewer: [id: accountTest1.id], reviewee: [id: accountTest2.id], reviewOf: 'Buyer', rating: 5, thumbs: 'up', description: 'great job!!'])
+        def resp = utils.doJsonPut("api/reviews/${reviewTestId}", [listing: [id: listingCompletedId], reviewer: [id: accountTest1.id], reviewee: [id: accountTest2.id], reviewOf: 'Buyer', rating: 5, thumbs: 'up', description: 'great job!!'])
 
         then:
         resp.status == 200
@@ -182,7 +182,7 @@ class ReviewRestFunctionalSpec extends Specification {
 
     def 'unsuccessfully delete a review'() {
         when:
-        def resp = doJsonDelete("api/reviews/${urlReviewId}", [])
+        def resp = utils.doJsonDelete("api/reviews/${urlReviewId}", [])
 
         then:
         resp.status == respStatus
@@ -202,14 +202,14 @@ class ReviewRestFunctionalSpec extends Specification {
         } as Integer
 
         when:
-        def resp = doJsonDelete("api/reviews/${reviewTestId}", [])
+        def resp = utils.doJsonDelete("api/reviews/${reviewTestId}", [])
 
         then:
         resp.status == 200
         resp.data == "Success!  Review ID ${reviewTestId} has been deleted."
 
         when:
-        resp = doGet("api/reviews/${reviewTestId}" as String)
+        resp = utils.doGet("api/reviews/${reviewTestId}" as String)
 
         then:
         resp.status == 404
