@@ -20,6 +20,9 @@
   },
   "homepage": "https://github.com/joh11399/MSSE_Auctions",
   "dependencies": {
-    "bower": "~1.4.1"
+    "bower": "~1.4.1",
+    "grunt": "~0.4.5",
+    "grunt-cli": "~0.1.13",
+    "grunt-shell": "~1.1.2"
   }
 }
